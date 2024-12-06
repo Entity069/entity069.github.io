@@ -1,0 +1,76 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+@font-face {
+  font-family: 'Depixel';
+  src: url('../../assets/fonts/depixelschmal.woff2') format('woff2'),
+       url('../../assets/fonts/depixelschmal.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+body {
+  font-family: 'Press Start 2P', sans-serif;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+section {
+  scroll-snap-align: start;
+}
+html, body {
+  overflow-y: scroll;
+  height: 100%;
+}
+
+.index-page {
+  scroll-snap-type: y mandatory;
+}
+.blogc {
+  font-family: 'Depixel';
+}
+
+/* Backgrounds for each section */
+#about {
+  background-image: url('../../assets/images/about_bg1.jpg');
+  background-size: cover;
+  background-attachment: fixed;
+  background-position: center;
+}
+#skills {
+  background-image: url('../../assets/images/skills_bg.jpg');
+  background-size: cover;
+  background-attachment: fixed;
+  background-position: center;
+}
+#projects {
+  background-image: url('../../assets/images/projects_bg.jpg');
+  background-size: cover;
+  background-attachment: fixed;
+  background-position: center;
+}
+#blog {
+  background-image: url('../../assets/images/blog_bg.jpg');
+  background-size: cover;
+  background-attachment: fixed;
+  background-position: center;
+}
+#contact {
+  background-image: url('../../assets/images/contact_bg.jpg');
+  background-size: cover;
+  background-attachment: fixed;
+  background-position: center;
+}
+.pixel-border {
+  border: 4px solid #FFFFFF;
+  border-radius: 0;
+}
+#background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  background-size: cover;
+  background-attachment: fixed;
+  background-position: center;
+  filter: blur(2px);
+}

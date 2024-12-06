@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>USC Fall CTF 2024 Writeups</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="./../../assets/css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github-dark.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script>hljs.highlightAll();</script>
+  <script>
+MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']]
+  },
+  chtml: {
+      scale: 1.6
+    }
+};
+</script>
+</head>
+<body class="text-white bg-black">
+  <div id="background" style="background-image: url('./../../assets/images/usc_2024_bg.jpg')"></div>
+  <header class="w-full top-0 bg-opacity-70 px-6 py-4 z-10">
+    <nav class="flex justify-between items-center">
+      <h1 class="text-2xl font-bold transform transition duration-500 text-slate-400 hover:text-slate-50">Entity069's Blog</h1>
+      <div class="space-x-6 text-sm">
+        <button class="px-2 py-2 transform transition duration-500 text-slate-400 hover:scale-110 hover:text-slate-50"><a href="../../index.html#about">About Me</a></button>
+        <button class="px-2 py-2 transform transition duration-500 text-slate-400 hover:scale-110 hover:text-slate-50"><a href="../../index.html#skills">Skills</a></button>
+        <button class="px-2 py-2 transform transition duration-500 text-slate-400 hover:scale-110 hover:text-slate-50"><a href="../../index.html#projects">Projects</a></button>
+        <button class="px-2 py-2 transform transition duration-500 text-slate-400 hover:scale-110 hover:text-slate-50"><a href="../../index.html#blog">Blog</a></button>
+        <button class="px-2 py-2 transform transition duration-500 text-slate-400 hover:scale-110 hover:text-slate-50"><a href="../../index.html#contact">Contact</a></button>
+      </div>
+    </nav>
+  </header>
+  <main class="px-8 py-12">
+    <article class="blogc p-6 bg-black bg-opacity-80 rounded-lg shadow-lg">
+      <header class="mb-8">
+        <h1 class="text-4xl text-center font-bold text-green-400 mb-4">USC CTF Fall 2024 Writeups</h1>
+        <p class="text-sm text-gray-400 py-2">Published on <time datetime="2024-11-27">December 06, 2024</time></p>
+
+        <h3 class="text-2xl font bold mt-4 mb-4">colors (crypto)</h3>
+        <hr>
+        <div class="m-4 flex justify-center items-center">
+            <img src="./../../assets/images/usc-ctf-2024/colors.png">
+        </div>
+        <p>
+        This was a rather simple challenge. The message is easily recognizable as base64. After that hex --> binary --> ASCII, which will give the flag.
+        </p>
+        <div class="m-4 flex justify-center items-center">
+            <img src="./../../assets/images/usc-ctf-2024/colors_sol.png">
+        </div>
+        <p class="mb-8">Flag: <code>CYBORG{tR0jans_love_C4rdinal_@nd_G0ld}</code></p>
+
+        <h3 class="text-2xl font bold mt-4 mb-4">iRobot (web)</h3>
+        <hr>
+        <div class="m-4 flex justify-center items-center">
+            <img src="./../../assets/images/usc-ctf-2024/irobots.png">
+        </div>
+        <p>
+        Another simple challenge. By the name one can guess that it hints at checking the <code>robots.txt</code> file. Heading over to that file gives this:
+        <pre class="py-2">
+          <code>
+User-agent: *
+Disallow: /hidden/flag.txt
+          </code>
+        </pre>
+        Going over <code>/hidden/flag.txt</code> gives the flag.
+        </p>
+        <p class="mb-8">Flag: <code>CYBORG{robots_txt_is_fun}</code></p>
+
+        <h3 class="text-2xl font bold mt-4 mb-4">weirdtraffic (forensics)</h3>
+        <hr>
+        <div class="m-4 flex justify-center items-center">
+            <img src="./../../assets/images/usc-ctf-2024/weirdtraffic.png">
+        </div>
+        <p>
+        We've been given a .pcapng file. Opening it in Wiresharks shows some connection captures. First I tried to find parts of the flag through a string search, which in turn actually gave the flag.
+        <div class="m-4 flex justify-center items-center">
+            <img src="./../../assets/images/usc-ctf-2024/wireshark_weirdtraffic.png">
+        </div>
+        </p>
+        <p class="mb-8">Flag: <code>CYBORG{hping3-is-a-cool-tool}</code></p>
+
+        <h3 class="text-2xl font bold mt-4 mb-4">pineapple (forensics)</h3>
+        <hr>
+        <div class="m-4 flex justify-center items-center">
+            <img src="./../../assets/images/usc-ctf-2024/pineapple.png">
+        </div>
+        <p>
+        Another Wireshark challenge. Opening it in Wireshark shows a lot of connections. I mean a lot. I started by filtering out the http connections first and found few.
+        <div class="m-4 flex justify-center items-center">
+            <img src="./../../assets/images/usc-ctf-2024/pineapple_1.png">
+        </div>
+        We can see that the victim has tried to make several <code>POST</code> requests. One of those requests to <code>/</code> has a forms with <code>usernmae</code>, <code>filename</code> and <code>filepw</code> fields. There's also an .7z compressed file, which can be extracted. To extract the file right click on the stream then Follow > HTTP Stream. A pop-up will appear containing the data contents of the stream. Click on Save as and save the file on your computer. Make sure that the data as showed is raw (since it is binary file, saving it in a specific encoding may lead to data loss as not every encoding has every characters). Now the thing is that the file we just saved has some response text and also the raw bytes for the .7z file. To get rid of the response text, open the file in some text-editor such as vim or nano. Then manually remove the unwanted contents.
+        <div class="m-4 flex justify-center items-center">
+            <img src="./../../assets/images/usc-ctf-2024/pineapple_2.png">
+        </div>
+        Now we check the file type:
+        <div class="m-4 flex justify-center items-center">
+            <img src="./../../assets/images/usc-ctf-2024/pineapple_3.png">
+        </div>
+        Now we try to extract the file:
+        <div class="m-4 flex justify-center items-center">
+            <img src="./../../assets/images/usc-ctf-2024/pineapple_4.png">
+        </div>
+        Okay.? There's a password? If you remeber correctly, there was a <code>filepw</code> field in a form found earlier. Checking one of the <code>POST</code> requests, we are able to see the form data submitted to the server.
+        <div class="m-4 flex justify-center items-center">
+            <img src="./../../assets/images/usc-ctf-2024/pineapple_5.png">
+        </div>
+        This gives the <code>filepw</code> as <code>conjoined_TRIANGLES</code>. Using this to extract the .7z file gives us a image file containing the file.
+        <div class="m-4 flex justify-center items-center">
+            <img src="./../../assets/images/usc-ctf-2024/flagimg.png">
+        </div>
+        </p>
+        <p class="mb-8">Flag: <code>CYBORG{pe4cefaRe_4x09}</code></p>
+
+        <h3 class="text-2xl font bold mt-4 mb-4">think_twice (forensics)</h3>
+        <hr>
+        <div class="m-4 flex justify-center items-center">
+            <img src="./../../assets/images/usc-ctf-2024/think_twice.png">
+        </div>
+        <p>
+        From description it is evident that we have to use exiftool. Using exitfool to extract the data gave a base64 string in the Software section of the metadata. Decoding it gave another base64 string, decoding further gave the flag.
+        <div class="m-4 flex justify-center items-center">
+            <img src="./../../assets/images/usc-ctf-2024/think_twice_1.png">
+        </div>
+        <div class="m-4 flex justify-center items-center">
+            <img src="./../../assets/images/usc-ctf-2024/think_twice_2.png">
+        </div>
+        </p>
+        <p class="mb-8">Flag: <code>Cyb0rg{McCarthy}</code></p>
+
+        <h3 class="text-2xl font bold mt-4 mb-4">decipherium (crypto) (Solved post-CTF)</h3>
+        <hr>
+        <div class="m-4 flex justify-center items-center">
+            <img src="./../../assets/images/usc-ctf-2024/decipherium.png">
+        </div>
+        <p>
+        The give file contains the following text:</p>
+        <pre class="py-2"><code>TeSbILaTeSnTeNoISnTeCsCsDyICdTeIISnTeLaSbCdTeTeTeLaTeSbINoTeSbSbInICdTeBaSbSbISnIYbSbCdTeXeINoSbSbTeHoTeITeFmTeITeMdITeSbICsEr</code></pre>
+        From observation, it seems to be the symbols for elements for the periodic table. Converting it to their corresponding atomic numbers gave this:
+        <pre class="py-2"><code>52 51 53 57 52 50 52 102 53 50 52 55 55 66 53 48 52 53 53 50 52 57 51 48 52 52 52 57 52 51 53 102 52 51 51 49 53 48 52 56 51 51 53 50 53 70 51 48 52 54 53 102 51 51 52 67 52 53 52 100 52 53 52 101 53 52 51 53 55 68</code></pre>
+        <p>At first it seems to be a simple hex but I was so wrong at that moment. Decoding it into hex didn't work; neither converting the whole number to bytes did. It was not until the end of the CTF I realized that we needed to simply convert each no inot its ASCII representation and de-hex the result. <br></p>
+        <p>Here's the solve script:</p>
+        <p>
+        <pre class="py-2">
+          <code class="python">
+elements = { "H": 1, "He": 2, "Li": 3, "Be": 4, "B": 5, "C": 6, "N": 7, "O": 8, "F": 9, "Ne": 10, "Na": 11, "Mg": 12, "Al": 13, "Si": 14, "P": 15, "S": 16, "Cl": 17, "Ar": 18, "K": 19, "Ca": 20, "Sc": 21, "Ti": 22, "V": 23, "Cr": 24, "Mn": 25, "Fe": 26, "Co": 27, "Ni": 28, "Cu": 29, "Zn": 30, "Ga": 31, "Ge": 32, "As": 33, "Se": 34, "Br": 35, "Kr": 36, "Rb": 37, "Sr": 38, "Y": 39, "Zr": 40, "Nb": 41, "Mo": 42, "Tc": 43, "Ru": 44, "Rh": 45, "Pd": 46, "Ag": 47, "Cd": 48, "In": 49, "Sn": 50, "Sb": 51, "Te": 52, "I": 53, "Xe": 54, "Cs": 55, "Ba": 56, "La": 57, "Ce": 58, "Pr": 59, "Nd": 60, "Pm": 61, "Sm": 62, "Eu": 63, "Gd": 64, "Tb": 65, "Dy": 66, "Ho": 67, "Er": 68, "Tm": 69, "Yb": 70, "Lu": 71, "Hf": 72, "Ta": 73, "W": 74, "Re": 75, "Os": 76, "Ir": 77, "Pt": 78, "Au": 79, "Hg": 80, "Tl": 81, "Pb": 82, "Bi": 83, "Po": 84, "At": 85, "Rn": 86, "Fr": 87, "Ra": 88, "Ac": 89, "Th": 90, "Pa": 91, "U": 92, "Np": 93, "Pu": 94, "Am": 95, "Cm": 96, "Bk": 97, "Cf": 98, "Es": 99, "Fm": 100, "Md": 101, "No": 102, "Lr": 103, "Rf": 104, "Db": 105, "Sg": 106, "Bh": 107, "Hs": 108, "Mt": 109, "Ds": 110, "Rg": 111, "Cn": 112, "Nh": 113, "Fl": 114, "Mc": 115, "Lv": 116, "Ts": 117, "Og": 118 }
+ctext = "TeSbILaTeSnTeNoISnTeCsCsDyICdTeIISnTeLaSbCdTeTeTeLaTeSbINoTeSbSbInICdTeBaSbSbISnIYbSbCdTeXeINoSbSbTeHoTeITeFmTeITeMdITeSbICsEr"
+
+elements_list = []
+i = 0
+while i < len(ctext):
+    if 65 <= ord(ctext[i]) <= 90:
+        if i + 1 < len(ctext) and 97 <= ord(ctext[i + 1]) <= 122:
+            elements_list.append(ctext[i:i + 2])
+            i += 2
+        else:
+            elements_list.append(ctext[i])
+            i += 1
+
+numbers = [elements[i] for i in elements_list]
+hex_string = "".join([chr(i) for i in numbers])
+print(b''.fromhex(hex_string).decode("utf-8"))
+          </code>
+        </pre>
+        </p>
+        <p class="mb-8">Flag: <code>CYBORG{PERI0DIC_C1PH3R_0F_3LEMENT5}</code></p>
+
+        <h3 class="text-2xl font bold mt-4 mb-4">unpopcorn (crypto)</h3>
+        <hr>
+        <div class="m-4 flex justify-center items-center">
+            <img src="./../../assets/images/usc-ctf-2024/unpopcorn.png">
+        </div>
+        <p>
+        We are given a python script which encrypts the flag of the challenge.
+        </p>
+        <pre class="py-2"><code class="python">
+m = 57983
+p = int(open("p.txt").read().strip())
+
+def pop(s):
+    return map(lambda x: ord(x)^42, s)
+
+def butter(s):
+    return map(lambda x: x*p%m, s)
+
+def churn(s):
+    l = list(map(lambda x: (x << 3), s))
+    return " ".join(map(lambda x: "{:x}".format(x).upper(), l[16:] + l[:16]))
+
+flag = open("flag.txt").read().strip()
+message = open("message.txt", "w")
+message.write(churn(butter(pop(flag))))
+message.close()
+        </code></pre>
+        <p>
+          <li>The flag is first "pop"ed , i.e., each character is XORed with 42.</li>
+          <li>Then each character of the XORed flag has been multiplied with $p$ then taken modulo $m$.</li>
+          <li>Finally the resulting flag has been converted shifted 3-bits to the left, then converted to hex, rotated saved.</li>
+          To solve the problem we need to apply each problem in its reverse order. Both <code>pop()</code> and <code>churn()</code> functions can be easily reversed; the problem lies with the <code>butter()</code> function since we do not know the value of $p$. Mathematically if $y$ is the result of the operation in <code>butter()</code>, then:<br>
+          $$
+          \begin{align*}
+          x \cdot p &\equiv y &\mod m \\
+          x &\equiv y \cdot p^{-1} &\mod m
+          \end{align*}
+          $$
+          To find $p^{-1}$ we need to find $p$ which, unfortunately we don't have. But what we do have is that we know the flag format and hence, given that m is a small number, we can bruteforce values of $p^{-1}$ and for each flag retrieved we can see if it fits the format correctly or not.
+          Below is the solve script for this:
+        </p>
+        <pre class="py-2"><code class="python">
+global m
+m = 57983
+ctext = [
+    0x3FB60, 0x4F510, 0x42930, 0x31058, 0xDEA8, 0x4A818, 0xDEA8, 0x1AA88,
+    0x65AE0, 0x1C590, 0x17898, 0x1C590, 0x29170, 0x3FB60, 0x55D10, 0x29170,
+    0x42930, 0x6A7D8, 0x4C320, 0x4F510, 0x5FC0, 0x193A0, 0x4F510, 0x2E288,
+    0x29170, 0x643F8, 0x31058, 0x6A7D8, 0x4A818, 0x1AA88, 0x1AA88
+]
+
+def reverse_churn(s):
+    dr = s[-16:] + s[:-16]
+    return list(map(lambda x: (x >> 3), dr))
+
+def reverse_butter(s, p_inv):
+    return list(map(lambda x: x * p_inv % m, s))
+
+def reverse_pop(s):
+    try:
+        return "".join(map(lambda x: chr(x ^ 42), s))
+    except ValueError:
+        return ""
+
+rev_churned = reverse_churn(ctext)
+
+for p_inv in range(1, m):
+    try:
+        rev_buttered = reverse_butter(rev_churned, p_inv)
+        flag = reverse_pop(rev_buttered)
+        if "CYBORG{" in flag:
+            print(flag)
+    except:
+        continue
+        </code></pre>
+        <p class="mb-8">Flag: <code>CYBORG{R1Ch_BUTT3RY_SUSTENANC3}</code></p>
+
+        <h3 class="text-2xl font bold mt-4 mb-4">D'Lo (crypto)</h3>
+        <hr>
+        <div class="m-4 flex justify-center items-center">
+            <img src="./../../assets/images/usc-ctf-2024/dlow.png">
+        </div>
+        <p>
+        I might first add that this was the challenge I enjoyed most out of all crypto challeneges. The <code>chall.sage</code> contains the following:
+        
+<pre class="py-2"><code class="python">from Crypto.Util.number import *
+
+FLAG  = b"REDACTED"
+
+p = getPrime(256)
+q = getPrime(256)
+e = 7
+n = p*q
+d = int(pow(e, -1, (p-1)*(q-1)))
+
+c = pow(bytes_to_long(FLAG), e, n)
+print(f"n = {n}")
+print(f"c = {c}")
+print(f"d_low = {hex(d)[70:]}")
+
+"""
+n = 9537465719795794225039144316914692273057528543708841063782449957642336689023241057406145879616743252508032700675419312420008008674130918587435719504215151
+c = 4845609252254934006909399633004175203346101095936020726816640779203362698009821013527198357879072429290619840028341235069145901864359947818105838016519415
+d_low = b9b24053029f5f424adc9278c750b42b0b2a134b0a52f13676e94c01ef77
+"""</code></pre>
+        <li>The program generates two 256-bit prime numbers $p$ and $q$.</li>
+        <li>It arbitraly takes the modulus, $e$ to be $7$.</li>
+        <li>Then it calculates the private modulus $d$, encrypts the flag and print the lower bits of $d$.</li>
+        At first, given the small size of $e$, a small public exponent attacks come to mind. But given the similar size of $c$ the attack might not be feasible.
+        <br>
+        Recall that $e$, $d$ and $N$ are related by the relation:
+        $$
+          \begin{align*}
+          e \cdot d &\equiv 1 \mod{\phi(N)} \\
+          \end{align*}
+        $$
+        where $\phi(m) = (p-1)(q-1) = N-(p+q-1)$ is called the Euler's Totient Function.<br>
+        So,
+        $$
+          \begin{align*}
+          e \cdot d = k \phi(N) + 1 \\
+          e \cdot d - k \phi(N) = 1 \\
+          \end{align*}
+        $$
+        for some positive integer $k$.<br>Now $d \leq \phi(N)$ since $d = modInv(e,\phi(N))$. This implies that $1 \leq k \leq e$. Hence we will have to check for only $e$ values of $k$.
+        Also we've been given some least significant bits of $d$ (let it be $b$). Therefore $d$ can be written as,
+        $$
+            d=d_{0} + 2^{b} \cdot d_{1}
+        $$
+        where $d_{0} = d \mod{2^{b}}$ is the known bits of $d$ and $d_{1}$ represents the unknown bits. Putting this value in the initial equation we get,
+        $$
+          \begin{align*}
+          e \cdot (d_{0} + 2^{b} \cdot d_{1}) - k \phi(N) = 1 \\
+          e \cdot d_{0} + e \cdot 2^{b} \cdot d_{1} - k \phi(N) = 1 \\
+          e \cdot d_{0} + e \cdot 2^{b} \cdot d_{1} - k \cdot (N-(p+q-1)) = 1 \\
+          \end{align*}
+        $$
+        Put $X=p+q$,
+        $$
+          \begin{align*}
+          e \cdot d_{0} + e \cdot 2^{b} \cdot d_{1} - k \cdot (N-(X-1)) = 1 \\
+          k \cdot X = k \cdot N + k - e \cdot d_{0} + 1 + e \cdot 2^{b} \cdot d_{1} \\
+          \end{align*}
+        $$
+        Further to remove the $d_{1}$ term, we solve the above equation modulo $2^{b}$ as $e \cdot 2^{b} \cdot d_{1} \equiv 0 \mod 2^{b}$.
+        $$
+          \begin{align*}
+          k \cdot X \equiv k \cdot N + k - e \cdot d_{0} + 1 \mod{2^{b}} \\
+          e \cdot d_{0} \cdot X - k\cdot X \cdot (N-X+1) + k \cdot N  \equiv X \mod{2^{b}} \\
+          \end{align*}
+        $$
+        Thus $p$ and $q$ be factorized easily and then the problem reduces to textbook RSA problem.
+        <pre class="py-2"><code class="python">
+d = int("0xb9b24053029f5f424adc9278c750b42b0b2a134b0a52f13676e94c01ef77",16)
+e = 7
+N = 9537465719795794225039144316914692273057528543708841063782449957642336689023241057406145879616743252508032700675419312420008008674130918587435719504215151
+known_bits = 240
+X = var('X')
+d0 = d % (2 ** known_bits)
+P.<x> = PolynomialRing(Zmod(N))
+
+for k in range(1, e+1):
+    try:
+        results = solve_mod([e * d0 * X - k * X * (N - X + 1) + k * N == X], 2 ** 240)
+        for m in results:
+            f = x * 2 ** known_bits + ZZ(m[0])
+            f = f.monic()
+            roots = f.small_roots(X = 2 ** (N.nbits() / 2 - known_bits), beta=0.3)
+            if roots:
+                x0 = roots[0]
+                p = gcd(2 ** known_bits * x0 + ZZ(m[0]), N)
+                q = N / ZZ(p)
+                print('p =', ZZ(p))
+                print('q =', N / ZZ(p))
+                assert ZZ(p)*(N/ZZ(p)) == N
+                break
+    except:
+        pass
+# p = 100571592176913563473553598439895415391332870938827636562155584701290520956889
+# q = 94832601466810038823671344791144082145009301280785700275762290283318790228359</code></pre>
+        </p>
+        <p>
+            <pre class="py-2"><code class="python">
+from Crypto.Util.number import long_to_bytes
+
+e = 7
+c = 4845609252254934006909399633004175203346101095936020726816640779203362698009821013527198357879072429290619840028341235069145901864359947818105838016519415
+n = 9537465719795794225039144316914692273057528543708841063782449957642336689023241057406145879616743252508032700675419312420008008674130918587435719504215151
+
+p = 100571592176913563473553598439895415391332870938827636562155584701290520956889
+q = 94832601466810038823671344791144082145009301280785700275762290283318790228359
+
+phi = (p-1)*(q-1)
+z = pow(e, -1, phi)
+m = pow(c, z, n)
+
+print(long_to_bytes(m))
+#CYBORG{H0w_w3ll_d0_y0u_th1nk_d'lo_w1ll_d0_7h15_53ason??}
+            </code></pre>
+        </p>
+        <p class="mb-8">Flag: <code>CYBORG{H0w_w3ll_d0_y0u_th1nk_d'lo_w1ll_d0_7h15_53ason??}</code></p>
+
+        <h3 class="text-2xl font bold mt-4 mb-4">beer sales (osint)</h3>
+        <hr>
+        <div class="m-4 flex justify-center items-center">
+            <img src="./../../assets/images/usc-ctf-2024/beer_sales.png">
+        </div>
+        <p>
+        Just search something like "Beer sale orlando august 2024"
+        <div class="m-4 flex justify-center items-center">
+            <img src="./../../assets/images/usc-ctf-2024/beer_sales_1.png">
+        </div>
+        Submit the URL as flag.
+        </p>
+        <p class="mb-8">Flag: <code>CYBORG{ftp://www.myflorida.com/pub/llweb/Beer4.pdf}</code></p>
+
+        <h3 class="text-2xl font bold mt-4 mb-4">TommyCam (osint)</h3>
+        <hr>
+        <div class="m-4 flex justify-center items-center">
+            <img src="./../../assets/images/usc-ctf-2024/tommycam.png">
+        </div>
+        <p>
+        Wayback machine had a link to the first <a href="https://web.archive.org/web/19961223044123/http://www.usc.edu/">archive</a> of the site. There is a <a href="https://web.archive.org/web/19961223044554/http://www.usc.edu/dept/TommyCam/">link</a> to view weather details via TommyCam. Clicking on that link has a <a href="https://web.archive.org/web/19961223052537/http://www.usc.edu/dept/TommyCam/technical.html">link</a> for another page which details the technical information of TommyCam.
+        <div class="m-4 flex justify-center items-center">
+            <img src="./../../assets/images/usc-ctf-2024/tommycam_1.png">
+        </div>        </p>
+        <p class="mb-8">Flag: <code>CYBORG{Toshiba 5200 80386}</code></p>
+
+        <h3 class="text-2xl font bold mt-4 mb-4">television (osint)</h3>
+        <hr>
+        <div class="m-4 flex justify-center items-center">
+            <img src="./../../assets/images/usc-ctf-2024/television.png">
+        </div>
+        <p>
+        Reversing searching the image by Google reveals a similar image at this <a href="https://perrymason.fandom.com/wiki/Radiant_Assembly_of_God">link</a>. From there, searching for "the radiant assembly of god church name" showed <a href="https://www.latimes.com/entertainment-arts/tv/story/2020-06-28/perry-mason-hbo-los-angeles-history">this link</a>. From there we can see the name of the building in a below section. Searching for the name lands us on a Wikipedia page where the name of the architect is mentioned.
+        <div class="m-4 flex justify-center items-center">
+            <img src="./../../assets/images/usc-ctf-2024/television_1.png">
+        </div>
+        </p>
+        <p class="mb-8">Flag: <code>CYBORG{Alfred Rosenheim}</code></p>
+
+        <h3 class="text-2xl font bold mt-4 mb-4">Tommy's Artventures (osint)</h3>
+        <hr>
+        <div class="m-4 flex justify-center items-center">
+            <img src="./../../assets/images/usc-ctf-2024/tommy_artventure.png">
+        </div>
+        <p>
+        First let's see what Tommy's upto. Seems like he just likes AI generated art. 
+        <div class="m-4 flex justify-center items-center">
+            <img src="./../../assets/images/usc-ctf-2024/tommy_artventure_1.png">
+        </div>
+        Well, there's a login page too. Since I don't have an account, I will sign up for one and then login.
+        <div class="m-4 flex justify-center items-center">
+            <img src="./../../assets/images/usc-ctf-2024/tommy_artventure_2.png">
+        </div>
+        After I login, there's a "Curate" button and a "Log out" button. When "Curate" is clicked it gives an error and says that only admin can curate.
+        <div class="m-4 flex justify-center items-center">
+            <img src="./../../assets/images/usc-ctf-2024/tommy_artventure_3.png">
+        </div>
+        <div class="m-4 flex justify-center items-center">
+            <img src="./../../assets/images/usc-ctf-2024/tommy_artventure_4.png">
+        </div>
+        If we see the localstorage we can see that there's a cookie stored. From the description we first read in the challenge, it seems that we have to forge the session cookie into thinking that we are the admin.
+        <div class="m-4 flex justify-center items-center">
+            <img src="./../../assets/images/usc-ctf-2024/tommy_artventure_5.png">
+        </div>
+        From the format the cookie seems to be an JWT encoded cookie. Decoding it on jwt.io gives us the follwing results.
+        <div class="m-4 flex justify-center items-center">
+            <img src="./../../assets/images/usc-ctf-2024/tommy_artventure_6.png">
+        </div>
+        So we need only change the username to admin then encode the cookie. Since we have the flask server's secret this is no heavy task.
+        <pre class="py-2"><code class="bash">> flask-unsign --sign --secret "4a6282bf78c344a089a2dc5d2ca93ae6" --cookie "{'user': 'admin'}"</code></pre>
+        Now changing this cookie with the one on the actual server would work. Now we can access the <code>/curate</code> button and get the flag.
+        <div class="m-4 flex justify-center items-center">
+            <img src="./../../assets/images/usc-ctf-2024/tommy_artventure_7.png">
+        </div>
+        </p>
+        <p class="mb-8">Flag: <code>CYBORG{oce4n5_auth3N71ca7i0N}</code></p>
+
+      </header>
+    </article>
+  </main>
+  <footer class="relative inset-x-0 w-full bottom-0 text-center py-4 bg-black bg-opacity-80">
+    <p class="text-xs">Made with ❤ by Entity069</p>
+  </footer>
+</body>
+</html>
