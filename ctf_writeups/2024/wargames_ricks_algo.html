@@ -103,24 +103,24 @@ while True:
             Where $ct$ is the flag ciphertext and $e$ is the public exponent. When this number is sent to the oracle to decipher, ($pt^{\prime}$ being the altered plaintext, $d$ is the private key and $N$ is the public modulus)
             $$
             \begin{align*}
-            pt^{\prime} = (ct^{\prime})^{d} \mod N  \\
-            pt^{\prime} = (ct \cdot r^{e})^{d} \mod N  \\
-            pt^{\prime} = (ct^{d} \cdot r^{ed}) \mod N  \\
-            pt^{\prime} = (ct^{d} \mod N \cdot r^{ed} \mod N) \mod N \\
+            pt^{\prime} &= (ct^{\prime})^{d} \mod N  \\
+            pt^{\prime} &= (ct \cdot r^{e})^{d} \mod N  \\
+            pt^{\prime} &= (ct^{d} \cdot r^{ed}) \mod N  \\
+            pt^{\prime} &= (ct^{d} \mod N \cdot r^{ed} \mod N) \mod N \\
             \end{align*}
             $$
             from $e \cdot d \equiv 1 \mod{\phi(N)}$, it follows that,
             $$
             \begin{align*}
-            pt^{\prime} = (pt \cdot r^{1+k\phi(N)} \mod N) \mod N  \\
-            pt^{\prime} = (pt \cdot r \cdot r^{k\phi(N)} \mod N) \mod N  \\
+            pt^{\prime} &= (pt \cdot r^{1+k\phi(N)} \mod N) \mod N  \\
+            pt^{\prime} &= (pt \cdot r \cdot r^{k\phi(N)} \mod N) \mod N  \\
             \end{align*}
             $$
             from Euler's Theorem we've, $a^{\psi(b)} \equiv 1 \mod b$ if $gcd(a,b) = 1$.
             <br>In this case $gcd(a,b)=gcd(r^{k},N)=gcd(r^{k},pq)$. Since $p$ and $q$ are prime, this implies $gcd(r^{k},pq)=1$ is always true (given $r^{k} < min(p,q)$) and hence one can say $r^{k\phi(N)} \mod N = 1$
             $$
             \begin{align*}
-            pt^{\prime} = (pt \cdot r) \mod N  \\
+            pt^{\prime} &= (pt \cdot r) \mod N  \\
             \end{align*}
             $$
             And the altered plaintext will be $r$ times the actual flag.
@@ -135,11 +135,11 @@ while True:
             For the first check, consider
             $$
             \begin{align*}
-            ct^{\prime} = (ct \cdot r^{e}) \mod N \\
-            pt^{\prime} = ((ct \cdot r^{e}) \mod N)^{d} \mod N  \\
-            pt^{\prime} = ((ct^{d} \cdot r^{ed}) \mod N) \mod N  \\
-            pt^{\prime} = ((ct^{d} \mod N \cdot r^{ed} \mod N) \mod N) \mod N  \\
-            pt^{\prime} = (ct^{d} \mod N \cdot r^{ed} \mod N) \mod N  \\
+            ct^{\prime} &= (ct \cdot r^{e}) \mod N \\
+            pt^{\prime} &= ((ct \cdot r^{e}) \mod N)^{d} \mod N  \\
+            pt^{\prime} &= ((ct^{d} \cdot r^{ed}) \mod N) \mod N  \\
+            pt^{\prime} &= ((ct^{d} \mod N \cdot r^{ed} \mod N) \mod N) \mod N  \\
+            pt^{\prime} &= (ct^{d} \mod N \cdot r^{ed} \mod N) \mod N  \\
             \end{align*}
             $$
             since the last modulo is reduntant. Afterwards the calculation is same as the above.
@@ -245,11 +245,11 @@ while True:
             Unlike the previous one this has disabled the decrypt flag option and hence we cannot use that again. Again, Hastad's Attack came to my mind. In brief, if a message $M$ is encrypted $e$ times using same public exponent and different modulus $N_{i}, 1 \leq i \leq e$ then,
             $$
             \begin{align*}
-            M^{e}  \equiv ct_{1} &\mod N_{1} \\
-            M^{e}  \equiv ct_{2} &\mod N_{2} \\
-            M^{e}  \equiv ct_{3} &\mod N_{3} \\
+            M^{e}  &\equiv ct_{1} \mod N_{1} \\
+            M^{e}  &\equiv ct_{2} \mod N_{2} \\
+            M^{e}  &\equiv ct_{3} \mod N_{3} \\
             \vdots  &  \\
-            M^{e} \equiv ct_{e} &\mod N_{e} \\
+            M^{e} &\equiv ct_{e} \mod N_{e} \\
             \end{align*}
             $$
             This system of congruences can be solved by Chinese Remainder Theorem and flag can be retrieved by taking the $e$-th root of the solution.<br>
