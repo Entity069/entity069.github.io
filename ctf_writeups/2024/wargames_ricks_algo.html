@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rick'S Algorithm | Wargames.MY CTF 2024</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="./../../assets/css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github-dark.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script>hljs.highlightAll();</script>
+  <script>
+MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']]
+  },
+  chtml: {
+      scale: 1.6
+    }
+};
+</script>
+</head>
+<body class="text-white bg-black">
+  <div id="background" style="background-image: url('./../../assets/images/wargames-2024/bg.jpg')"></div>
+  <header class="w-full top-0 bg-opacity-70 px-6 py-4 z-10">
+    <nav class="flex justify-between items-center">
+      <h1 class="text-2xl font-bold transform transition duration-500 text-slate-400 hover:text-slate-50">Entity069's Blog</h1>
+      <div class="space-x-6 text-sm">
+        <button class="px-2 py-2 transform transition duration-500 text-slate-400 hover:scale-110 hover:text-slate-50"><a href="../../index.html#about">About Me</a></button>
+        <button class="px-2 py-2 transform transition duration-500 text-slate-400 hover:scale-110 hover:text-slate-50"><a href="../../index.html#skills">Skills</a></button>
+        <button class="px-2 py-2 transform transition duration-500 text-slate-400 hover:scale-110 hover:text-slate-50"><a href="../../index.html#projects">Projects</a></button>
+        <button class="px-2 py-2 transform transition duration-500 text-slate-400 hover:scale-110 hover:text-slate-50"><a href="../../index.html#blog">Blog</a></button>
+        <button class="px-2 py-2 transform transition duration-500 text-slate-400 hover:scale-110 hover:text-slate-50"><a href="../../index.html#contact">Contact</a></button>
+      </div>
+    </nav>
+  </header>
+  <main class="px-8 py-12">
+    <article class="blogc p-6 bg-black bg-opacity-80 rounded-lg shadow-lg">
+      <header class="mb-8">
+        <h1 class="text-4xl text-center font-bold text-green-400 mb-4">Rick'S Algorithm | Wargames.MY CTF 2024</h1>
+        <p class="text-sm text-gray-400 py-2">Published on <time datetime="2024-12-29">December 29, 2024</time></p>
+
+        <h3 class="text-2xl font bold mt-4 mb-4">Rick'S Algorithm (crypto)</h3>
+        <hr>
+        <div class="m-4 flex justify-center items-center">
+            <img src="./../../assets/images/wargames-2024/rick_1.png">
+        </div>
+        <p>
+        Let's see what we have in <code>server.py</code></p>
+        <p>
+        <pre class="py-2"><code class="python">from Crypto.Util.number import *
+import os
+from secret import revealFlag
+flag = bytes_to_long(b"wgmy{REDACTED}")
+
+p = getStrongPrime(1024)
+q = getStrongPrime(1024)
+e = 0x557
+n = p*q
+phi = (p-1)*(q-1)
+d = inverse(e,phi)
+
+while True:
+    print("Choose an option below")
+    print("=======================")
+    print("1. Encrypt a message")
+    print("2. Decrypt a message")
+    print("3. Print encrypted flag")
+    print("4. Print flag")
+    print("5. Exit")
+
+    try:
+        option = input("Enter option: ")
+        if option == "1":
+            m = bytes_to_long(input("Enter message to encrypt: ").encode())
+            print(f"Encrypted message: {pow(m,e,n)}")
+        elif option == "2":
+            c = int(input("Enter ciphertext to decrypt: "))
+            if c % pow(flag,e,n) == 0 or flag % pow(c,d,n) == 0:
+                print("HACKER ALERT!!")
+                break
+            print(f"Decrypted message: {pow(c,d,n)}")
+        elif option == "3":
+            print(f"Encrypted flag: {pow(flag,e,n)}")
+        elif option == "4":
+            print("Revealing flag: ")
+            revealFlag()
+        elif option == "5":
+            print("Bye!!")
+            break
+    except Exception as e:
+        print("HACKER ALERT!!")</code></pre>
+        </p>
+        <p>
+            So, like any other this is an oracle where one can encrypt/decrypt a message using RSA encryption. 
+            The first attack that came to my mind was <a href="https://docs.xanhacks.xyz/crypto/rsa/08-hastad-broadcast-attack/">Hastad's Broadcast Attack</a>. However that would required 1367 pairs of public modulus and the ciphertext. But often such oracles are susceptible by Choosen Ciphertext Attacks. This means that we can choose a ciphertext to decrypt such that the resulting decrypted message contains flag as a factor. To perform this we typically take an integer $r$. Consider the ciphertext to be as $ct$. Now consider
+            $$
+            \begin{align*}
+            ct^{\prime} = ct \cdot r^{e} \\
+            \end{align*}
+            $$
+            Where $ct$ is the flag ciphertext and $e$ is the public exponent. When this number is sent to the oracle to decipher, ($pt^{\prime}$ being the altered plaintext, $d$ is the private key and $N$ is the public modulus)
+            $$
+            \begin{align*}
+            pt^{\prime} = (ct^{\prime})^{d} \mod N  \\
+            pt^{\prime} = (ct \cdot r^{e})^{d} \mod N  \\
+            pt^{\prime} = (ct^{d} \cdot r^{ed}) \mod N  \\
+            pt^{\prime} = (ct^{d} \mod N \cdot r^{ed} \mod N) \mod N \\
+            \end{align*}
+            $$
+            from $e \cdot d \equiv 1 \mod{\phi(N)}$, it follows that,
+            $$
+            \begin{align*}
+            pt^{\prime} = (pt \cdot r^{1+k\phi(N)} \mod N) \mod N  \\
+            pt^{\prime} = (pt \cdot r \cdot r^{k\phi(N)} \mod N) \mod N  \\
+            \end{align*}
+            $$
+            from Euler's Theorem we've, $a^{\psi(b)} \equiv 1 \mod b$ if $gcd(a,b) = 1$.
+            <br>In this case $gcd(a,b)=gcd(r^{k},N)=gcd(r^{k},pq)$. Since $p$ and $q$ are prime, this implies $gcd(r^{k},pq)=1$ is always true (given $r^{k} < min(p,q)$) and hence one can say $r^{k\phi(N)} \mod N = 1$
+            $$
+            \begin{align*}
+            pt^{\prime} = (pt \cdot r) \mod N  \\
+            \end{align*}
+            $$
+            And the altered plaintext will be $r$ times the actual flag.
+            <br>However this one has this interesting line:
+        </p>
+        <pre><code class="python">if c % pow(flag,e,n) == 0 or flag % pow(c,d,n) == 0:</code></pre>
+        <p>
+            This disables one to use above approach to get the flag. And that's what we have to do in this challenge: bypass this check.<br>
+        </p>
+        <p>
+            The second check says that if $flag=k \cdot pt^{\prime}$ then the script raises an hacking alert. This is reduntant if $pt^{\prime} > flag$.<br>
+            For the first check, consider
+            $$
+            \begin{align*}
+            ct^{\prime} = (ct \cdot r^{e}) \mod N \\
+            pt^{\prime} = ((ct \cdot r^{e}) \mod N)^{d} \mod N  \\
+            pt^{\prime} = ((ct^{d} \cdot r^{ed}) \mod N) \mod N  \\
+            pt^{\prime} = ((ct^{d} \mod N \cdot r^{ed} \mod N) \mod N) \mod N  \\
+            pt^{\prime} = (ct^{d} \mod N \cdot r^{ed} \mod N) \mod N  \\
+            \end{align*}
+            $$
+            since the last modulo is reduntant. Afterwards the calculation is same as the above.
+        </p>
+        <p>
+            Another thing in this challenge was that the piblic modulus $N$ was not provided. Hence we had to retrieve that by sending some messages as first.
+        </p>
+        <pre class="py-2"><code class="python">from Crypto.Util.number import long_to_bytes, bytes_to_long
+from pwn import *
+import gmpy2
+
+def recover_n(pairings, e):
+    pt1, ct1 = pairings[0]
+    N = ct1 - pow(pt1, e)
+    for pt,ct in pairings:
+        val = gmpy2.mpz(ct - pow(pt, e))
+        N = gmpy2.gcd(val, N)
+
+    return N
+
+HOST = "43.217.80.203"
+PORT = 34235
+conn = remote(HOST, PORT)
+e = 0x557
+msgs = ["Hey Jude, don't make it bad.",
+    'Take a sad song and make it better.',
+    'Remember to let her into your heart,',
+    'Then you can start to make it better.',
+    "Hey Jude, don't be afraid."]
+pairings = []
+
+for msg in msgs:
+    conn.sendline(b"1")
+    conn.sendline(msg.encode())
+    conn.recvuntil(b"Encrypted message:")
+    ct = int(conn.recvuntil(b"\n").decode().strip())
+    pt = bytes_to_long(msg.encode())
+    pairings.append((pt, ct))
+
+conn.sendline(b"3")
+conn.recvuntil(b"Encrypted flag:")
+
+flag = int(conn.recvuntil(b"\n").decode().strip())
+N = recover_n(pairings,e)
+fflag = (flag*pow(2,e)) % N
+
+conn.sendline(b"2")
+conn.recvuntil(b"Enter ciphertext to decrypt: ")
+conn.sendline(str(fflag).encode())
+conn.recvuntil(b"Decrypted message:")
+
+print(long_to_bytes(int(conn.recvuntil(b"\n").decode().strip())//2))</code></pre>
+        <p class="mb-8">Flag: <code>wgmy{ce7a475ff0e122e6ac34c3765449f71d}</code></p>
+
+        <h3 class="text-2xl font bold mt-4 mb-4">Rick'S Algorithm 2 (crypto)</h3>
+        <hr>
+        <div class="m-4 flex justify-center items-center">
+            <img src="./../../assets/images/wargames-2024/rick_2.png">
+        </div>
+        <p>
+        Again, let's check <code>server.py</code></p>
+        <p>
+            <pre class="py-2"><code class="python">from Crypto.Util.number import *
+import os
+from secret import revealFlag
+flag = bytes_to_long(b"wgmy{REDACTED}")
+
+p = getStrongPrime(1024)
+q = getStrongPrime(1024)
+e = 0x557
+n = p*q
+phi = (p-1)*(q-1)
+d = inverse(e,phi)
+
+while True:
+    print("Choose an option below")
+    print("=======================")
+    print("1. Encrypt a message")
+    print("2. Decrypt a message (Disabled)")
+    print("3. Print encrypted flag")
+    print("4. Print flag")
+    print("5. Exit")
+
+    try:
+        option = input("Enter option: ")
+        if option == "1":
+            m = bytes_to_long(input("Enter message to encrypt: ").encode())
+            print(f"Encrypted message: {pow(m,e,n)}")
+        elif option == "2":
+            print(f"Disabled decryption to prevent flag leaking!")
+        elif option == "3":
+            print(f"Encrypted flag: {pow(flag,e,n)}")
+        elif option == "4":
+            print("Revealing flag: ")
+            revealFlag()
+        elif option == "5":
+            print("Bye!!")
+            break
+    except Exception as e:
+        print("HACKER ALERT!!")</code></pre>                   
+        </p>
+        <p>
+            Unlike the previous one this has disabled the decrypt flag option and hence we cannot use that again. Again, Hastad's Attack came to my mind. In brief, if a message $M$ is encrypted $e$ times using same public exponent and different modulus $N_{i}, 1 \leq i \leq e$ then,
+            $$
+            \begin{align*}
+            M^{e}  \equiv ct_{1} &\mod N_{1} \\
+            M^{e}  \equiv ct_{2} &\mod N_{2} \\
+            M^{e}  \equiv ct_{3} &\mod N_{3} \\
+            \vdots  &  \\
+            M^{e} \equiv ct_{e} &\mod N_{e} \\
+            \end{align*}
+            $$
+            This system of congruences can be solved by Chinese Remainder Theorem and flag can be retrieved by taking the $e$-th root of the solution.<br>
+            Unfortunately, I am still not able to solve this problem because gathering 1367 pairs of modulus and ciphertext is a tedious task (atleast for me). My script would just take forever to run. I will update this writeup again if I could find an alternate solution or my script executes fully.<br>
+            Anyway, here's my script:
+        </p>
+        <pre class="py-2"><code class="python">from Crypto.Util.number import long_to_bytes, bytes_to_long
+from pwn import *
+import gmpy2
+from sympy.ntheory.modular import crt
+
+gmpy2.get_context().precision=700
+
+def recover_n(pairings, e):
+    pt1, ct1 = pairings[0]
+    N = ct1 - pow(pt1, e)
+    for pt,ct in pairings:
+        val = gmpy2.mpz(ct - pow(pt, e))
+        N = gmpy2.gcd(val, N)
+
+    return N
+
+HOST = "43.216.228.210"
+PORT = 32859
+e = 0x557
+msgs = ["Hey Jude, don't make it bad.",
+    'Take a sad song and make it better.',
+    'Remember to let her into your heart,',
+    'Then you can start to make it better.',
+    "Hey Jude, don't be afraid."]
+pairings = []
+Ns = []
+flags = []
+
+for i in range(e):
+    conn = remote(HOST, PORT)
+    for msg in msgs:
+        conn.sendline(b"1")
+        conn.sendline(msg.encode())
+        conn.recvuntil(b"Encrypted message:")
+        ct = int(conn.recvuntil(b"\n").decode().strip())
+        pt = bytes_to_long(msg.encode())
+        pairings.append((pt, ct))
+
+    conn.sendline(b"3")
+    conn.recvuntil(b"Encrypted flag:")
+
+    flag = int(conn.recvuntil(b"\n").decode().strip())
+    N = recover_n(pairings,e)
+    Ns.append(N)
+    flags.append(flag)
+    conn.close()
+
+c = gmpy2.root(crt(flags,Ns)[0])
+# print(c)
+print(long_to_bytes(int(c,e)))</code></pre>
+        <p class="mb-8">Flag: <code>Pending</code></p>
+
+      </header>
+    </article>
+  </main>
+  <footer class="relative inset-x-0 w-full bottom-0 text-center py-4 bg-black bg-opacity-80">
+    <p class="text-xs">Made with ❤ by Entity069</p>
+  </footer>
+</body>
+</html>
