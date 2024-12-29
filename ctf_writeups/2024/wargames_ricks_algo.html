@@ -280,11 +280,11 @@ msgs = ["Hey Jude, don't make it bad.",
     'Remember to let her into your heart,',
     'Then you can start to make it better.',
     "Hey Jude, don't be afraid."]
-pairings = []
 Ns = []
 flags = []
 
 for i in range(e):
+    pairings = []
     conn = remote(HOST, PORT)
     for msg in msgs:
         conn.sendline(b"1")
