@@ -303,7 +303,7 @@ for i in range(e):
     flags.append(flag)
     conn.close()
 
-c = crt(Ns,flags)[0]
+c = crt(flags,Ns)[0]
 # print(c)
 print(long_to_bytes(int(gmpy2.root(c,e))))</code></pre>
         <p class="mb-8">Flag: <code>Pending</code></p>
