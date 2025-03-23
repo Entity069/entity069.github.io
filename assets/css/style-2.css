@@ -77,10 +77,6 @@ ul {
     display: none;
 }
 
-.theme-toggle:checked ~ .body-wrapper {
-    --bg-color: var(--bg-color-dark);
-}
-
 .theme-toggle:checked ~ * {
     --bg-color: var(--bg-color-dark);
     --card-bg: var(--card-bg-dark);
@@ -371,15 +367,19 @@ header {
 }
 
 .projects-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr));
+    display: flex;
+    flex-wrap: wrap;
     gap: 2rem;
+    align-items: stretch;
     width: 100%;
 }
 
 .project-card {
     display: flex;
     flex-direction: column;
+    width: 100%;
+    max-width: 22rem;
+    flex: 1 1 20rem;
 }
 
 .project-image {
@@ -421,13 +421,14 @@ header {
 .project-links {
     display: flex;
     gap: 1rem;
+    justify-content: center;
 }
 
 .skills-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
-    gap: 2rem;
+    display: flex;
+    flex-wrap: wrap;
     width: 100%;
+    margin: -1rem;
 }
 
 .skill-card {
@@ -436,6 +437,8 @@ header {
     align-items: center;
     padding: 2rem 1.5rem;
     text-align: center;
+    flex: 1 0 15rem;
+    margin: 1rem;
 }
 
 .skill-icon {
@@ -576,6 +579,22 @@ footer {
     color: var(--text-primary);
 }
 
+.heart {
+    display: inline-block;
+    animation: pulse 0.5s infinite alternate;
+  }
+  
+@keyframes pulse {
+0% {
+    transform: scale(1);
+    opacity: 0.8;
+}
+100% {
+    transform: scale(1.2);
+    opacity: 1;
+}
+}  
+
 @media screen and (max-width: 62rem) {
     html {
         font-size: 0.875rem;
@@ -617,7 +636,7 @@ footer {
     }
     
     .nav-toggle:checked ~ .nav-toggle-label span:nth-child(1) {
-        transform: rotate(45deg) translate(5px, 5px);
+        transform: rotate(45deg) translate(8px, 2px);
     }
     
     .nav-toggle:checked ~ .nav-toggle-label span:nth-child(2) {
@@ -625,18 +644,13 @@ footer {
     }
     
     .nav-toggle:checked ~ .nav-toggle-label span:nth-child(3) {
-        transform: rotate(-45deg) translate(7px, -6px);
+        transform: rotate(-45deg) translate(8px, -2px);
     }
     
     .theme-toggle-container {
         margin: 2rem 0;
     }
-    
-    .projects-container,
-    .skills-container {
-        grid-template-columns: 1fr;
-    }
-    
+
     .section {
         padding: 4rem 1.5rem;
     }
