@@ -11,6 +11,7 @@ params:
   profileMode:
     enabled: true
     title: "Entity069" # optional default will be site title
+    subtitle: "Engineering undergrad and programmer." # optional default will be site subtitle
     imageUrl: "https://avatars.githubusercontent.com/u/80216737" # optional
     imageTitle: "cat preying on shark" # optional
     imageWidth: 160 # custom size
