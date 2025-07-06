@@ -1,0 +1,21 @@
+baseURL: https://entity069.tech/
+languageCode: en-us
+title: Entity069's Blog
+theme: ["PaperMod"]
+
+params:
+  profileMode:
+    enabled: true
+    title: "Entity069" # optional default will be site title
+    imageUrl: "https://avatars.githubusercontent.com/u/80216737" # optional
+    imageTitle: "cat preying on shark" # optional
+    imageWidth: 160 # custom size
+    imageHeight: 160 # custom size
+
+  socialIcons: # optional
+    - name: "github"
+      url: "<link>"
+    - name: "twitter"
+      url: "<link2>"
+    - name: "discord"
+      url: "https://discord.com/users/818092517261705227"
